@@ -1,17 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#000"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:orientation="horizontal"
+android:layout_gravity="center"
+    android:background="#000">
 
->
+<!-- 버튼 작업 -->
+
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
 
     <ToggleButton
         android:id="@+id/car_open"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:background="@drawable/car_opened"
+        android:layout_width="53dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/togglebtn_caropen"
         android:textOff=""
-        android:textOn=""/>
+        android:textOn="" />
+
+
+    <ImageButton
+        android:id="@+id/beepsound"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/imgbtn_light" />
+</LinearLayout>
+
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <ImageButton
+        android:id="@+id/booting_car"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/imgbtn_booting"
+
+        />
+
+    <ImageButton
+        android:id="@+id/button4"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/imgbtn_beep"
+        />
+</LinearLayout>
+
 </LinearLayout>
