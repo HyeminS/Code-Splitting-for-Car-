@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#afaaaa">
+
+
+<ImageButton
+android:id="@+id/MusicButton"
+android:layout_width="100dp"
+android:layout_height="100dp"
+android:onClick="Music"
+android:visibility="visible"
+    app:srcCompat="@drawable/ic_music"
+ />
+
+<ImageButton
+android:id="@+id/MapButton"
+android:layout_marginStart="100dp"
+android:layout_width="100dp"
+android:layout_height="100dp"
+    app:srcCompat="@drawable/ic_placeholder"
+    />
+
+<ImageButton
+android:id="@+id/SettingButton"
+android:layout_marginStart="200dp"
+android:layout_width="100dp"
+android:layout_height="100dp"
+    app:srcCompat="@drawable/ic_settings" />
+
+<ImageButton
+android:id="@+id/WeatherButton"
+android:layout_marginStart="300dp"
+android:layout_width="100dp"
+android:layout_height="100dp"
+    app:srcCompat="@drawable/ic_umbrella_and_raindrops" />
+<ImageButton
+android:id="@+id/GameButton"
+android:layout_marginStart="400dp"
+android:layout_width="100dp"
+android:layout_height="100dp"
+    app:srcCompat="@drawable/ic_game_controller" />
+
+<ImageButton
+android:id="@+id/YoutubeButton"
+android:layout_marginStart="500dp"
+android:layout_width="100dp"
+android:layout_height="100dp"
+    app:srcCompat="@drawable/ic_youtube" />
+<ImageButton
+android:id="@+id/ChattingButton"
+android:layout_marginStart="600dp"
+android:layout_width="100dp"
+android:layout_height="100dp"
+    app:srcCompat="@drawable/ic_chat"/>
+
+<ImageButton
+android:id="@+id/CalenderButton"
+android:layout_marginStart="700dp"
+android:layout_width="100dp"
+android:layout_height="100dp"
+    app:srcCompat="@drawable/ic_calendar"/>
+</RelativeLayout>
