@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
        //        WindowManager.LayoutParams.FLAG_FULLSCREEN);
       //  SystemClock.sleep(4000);
-        Log.i("hehe","시작1");
+       // Log.i("hehe","시작1");
         super.onCreate(savedInstanceState);
        /* setContentView(R.layout.blank);
         Runnable updater = new Runnable() {
