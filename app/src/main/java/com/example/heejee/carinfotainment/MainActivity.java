@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,81 +45,57 @@ import static java.lang.Thread.sleep;
 
 
 public class MainActivity extends AppCompatActivity {
-    private String ip = "10.19.6.21";
-    private String port = "8983";
+    private String ip = "192.168.0.4";
+    private String port = "8989";
+    public int connect_check;
     Handler handler = new Handler();
-    static public int connect_check;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-       // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-       //        WindowManager.LayoutParams.FLAG_FULLSCREEN);
-      //  SystemClock.sleep(4000);
-       // Log.i("hehe","시작1");
+        connect_check = 0;
+        Blank_Thread thread = new Blank_Thread();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+               WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
-       /* setContentView(R.layout.blank);
-        Runnable updater = new Runnable() {
-            public void run() {
-                    Log.i("hehe","함수들어감");
-                    setContentView(R.layout.blank);    }
-        };
-        handler.post(updater);*/
-       // setContentView(R.layout.blank);
-        //setContentView(R.layout.blank);
         setContentView(R.layout.blank);
-        //clickblank();
-        Log.i("hehe","블랭크시작");
-        Log.i("hehe","슬립1");
-        NetworkTask myClientTask = new NetworkTask(
-                ip, Integer.parseInt(port)
+        Log.i("heho","통신시작");
+       NetworkTask myClientTask = new NetworkTask(ip, Integer.parseInt(port)
         );
+
         myClientTask.execute();
-        //clickTimer();
-        //clickTimer();
-        /*try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
-        //connect_check = 1;
-        //SystemClock.sleep(10000);
-        Log.i("hehe","뉴액티비티 시작전");
-        Connect();
-        //clickTimer();
-    }
-   /* Runnable updater = new Runnable() {
-        public void run() {
-            for(int i =0; i<2; i++)
-                setContentView(R.layout.blank);        }
-    };*/
-   public void clickblank() {
-       Runnable updater = new Runnable() {
-           public void run() {
-               for(int i =0; i<2; i++){
-                       Log.i("hehe","함수들어감");
-                       setContentView(R.layout.blank);    }
-           }
-       };
+        Log.i("heho","올바른 연결");
+      //  if(connect_check == 1) {
+        //    Log.i("hehe","6번");
+           thread.start();
+        //}
 
-       handler.post(updater);
-   }
-    public void clickTimer() {
-        Runnable updater = new Runnable() {
+
+    }
+    private class Blank_Thread extends Thread {
+
             public void run() {
-                for(int i =0; i<1; i++){
-                    Log.i("hehe","함수들어감");
-                    Connect();}        }
-        };
+                SystemClock.sleep(3000);
+                new Thread(new Runnable() {
+                    @Override public void run(){
+                        for(int i = 0; i<1; i++) {
+                            runOnUiThread (new Runnable(){ public void run(){
+                                Connect();
+                            } });
+                        } }
+                }).start();
 
-        handler.post(updater);
-    }
+            }
+        }
+
+
     public void Connect(){
-            setContentView(R.layout.blank);
-        SystemClock.sleep(10000);
+
+        Log.i("heho","메인화면 시작");
+
         setContentView(R.layout.activity_main);
             View view = getWindow().getDecorView();
 
             loadFragment(new Fragment_button());
-
             loadFragment(new Fragment_map());
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -176,17 +153,24 @@ public class MainActivity extends AppCompatActivity {
                     OutputStream outputStream = socket.getOutputStream();
                     PrintStream printStream = new PrintStream(outputStream);
                     BufferedReader inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    printStream.print("abcd");
+                   printStream.print("Car start");
                     response = inFromServer.readLine();
-                   // Log.i("kk", response);
-
-                    printStream.close();
+                    //Log.i("hehe",response);
+                    if(response.equals("hihi")){
+                        Log.i("hehe",response);
+                    }
+                   printStream.close();
 
                 } catch (IOException e) {
                     Log.e("TCP", "don't send message!");
                     e.printStackTrace();
                 }
                 socket.close();
+
+
+
+
+
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             } catch (IOException e) {
