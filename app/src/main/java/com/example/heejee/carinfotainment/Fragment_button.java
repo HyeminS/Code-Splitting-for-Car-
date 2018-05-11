@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -31,15 +32,15 @@ import java.net.UnknownHostException;
  */
 
 public class Fragment_button extends Fragment {
+
     class SettingTask extends AsyncTask<Void, String, Void> {
         private ProgressDialog mDlg = new ProgressDialog(Fragment_button.this.getContext());
         private int mId = 0;
 
-
         @Override
         protected void onPreExecute() {
             mDlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            mDlg.setMessage("first message");
+            mDlg.setMessage("Please Wait....>_<");
             mDlg.setCancelable(false);
             mDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
@@ -63,15 +64,40 @@ public class Fragment_button extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            publishProgress("second message");
+            Socket socket = null;
+            BufferedReader br = null;
+            PrintStream ps = null;
+            String s = null;
 
             try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                //do nothing
+                socket = new Socket("192.168.137.144", 8888);
+                br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                ps = new PrintStream(socket.getOutputStream());
+
+                ps.println("hello");
+                s = br.readLine();
+                s = s.toLowerCase();
+                if (s.equals("okay")) {
+                    startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (ps != null) {
+                        ps.close();
+                    }
+                    if (br != null) {
+                        br.close();
+                    }
+                    if (socket != null) {
+                        socket.close();
+                    }
+                } catch (IOException e) {
+                    //do nothing
+                }
             }
 
-            startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
 
             return null;
         }
@@ -85,6 +111,7 @@ public class Fragment_button extends Fragment {
         view = inflater.inflate(R.layout.fragment_button, container, false);
 
         final ImageButton MusicButton = (ImageButton) view.findViewById(R.id.MusicButton);
+        ;
         MusicButton.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,14 +130,10 @@ public class Fragment_button extends Fragment {
         });
         final ImageButton SettingButton = (ImageButton) view.findViewById(R.id.SettingButton);
         SettingButton.setOnClickListener(new ImageButton.OnClickListener() {
-            private String ip = "192.168.0.4";
-            private String port = "8989";
+
             @Override
             public void onClick(View view) {
-                Fragment_button.NetworkTask CodeSplitting = new Fragment_button.NetworkTask(ip, Integer.parseInt(port));
-                CodeSplitting.execute();
-
-//                startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+                //startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
                 new SettingTask().execute();
             }
         });
@@ -163,64 +186,5 @@ public class Fragment_button extends Fragment {
         return view;
     }
 
-    public class NetworkTask extends AsyncTask<Void, Void, Void> {
 
-        String dstAddress;
-        int dstPort;
-        JSONObject jsonObject = new JSONObject();
-        String response;
-
-        NetworkTask(String addr, int port) {
-            dstAddress = addr;
-            dstPort = port;
-        }
-
-        private void sendObject() {
-            try {
-                Log.i("Open_State", "Open_State = 1");
-                jsonObject.put("Open_State", "1");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-
-            try {
-                Log.e("TCP", "server connecting~~!");
-                Socket socket = new Socket(dstAddress, dstPort);
-                sendObject();
-
-                try {
-                    // InputStream inputStream = socket.getInputStream();
-                    OutputStream outputStream = socket.getOutputStream();
-                    PrintStream printStream = new PrintStream(outputStream);
-                    BufferedReader inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    printStream.print("Car start");
-                    response = inFromServer.readLine();
-                    //Log.i("hehe",response);
-                    if (response.equals("hihi")) {
-                        Log.i("hehe", response);
-                    }
-                    printStream.close();
-
-                } catch (IOException e) {
-                    Log.e("TCP", "don't send message!");
-                    e.printStackTrace();
-                }
-                socket.close();
-
-
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-
-    }
 }
