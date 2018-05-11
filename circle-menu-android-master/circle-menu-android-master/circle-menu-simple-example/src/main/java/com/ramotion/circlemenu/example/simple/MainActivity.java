@@ -19,18 +19,52 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
 
 public class MainActivity extends AppCompatActivity {
-    private String ip = "10.19.6.1";
-    private String port = "8480";
+    private class NetworkManagerThread extends Thread {
+        public void run() {
+            try {
+                Log.i("TCP", "NetworkManagerThread");
+
+                ServerSocket socServer = new ServerSocket(8888);
+                Socket socClient = null;
+                BufferedReader br = null;
+                PrintStream ps = null;
+                String s = null;
+
+                while (true) {
+                    socClient = socServer.accept();
+                    Log.i("TCP", "" + socClient.getInetAddress().getHostAddress());
+
+                    br = new BufferedReader(new InputStreamReader(socClient.getInputStream()));
+                    ps = new PrintStream(socClient.getOutputStream());
+
+                    s = br.readLine();
+                    Log.i("TCP", s);
+                    ps.println("OKAY");
+
+                    br.close();
+                    ps.close();
+                    socClient.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private String ip = "192.168.137.62";
+    private String port = "7880";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        new NetworkManagerThread().start();
 
         final CircleMenuView menu = findViewById(R.id.circle_menu);
         menu.setEventListener(new CircleMenuView.EventListener() {
@@ -66,21 +100,21 @@ public class MainActivity extends AppCompatActivity {
                 myClientTask.execute();
 
                 JSONObject jsonObject = new JSONObject();
-                switch (index){
+                switch (index) {
                     case 0:
-                        myClientTask.sendObject("User_Device","PowerOn");
+                        myClientTask.sendObject("User_Device", "PowerOn");
                         break;
                     case 1:
-                        myClientTask.sendObject("User_Device","Open");
+                        myClientTask.sendObject("User_Device", "Open");
                         break;
                     case 2:
-                        myClientTask.sendObject("User_Device","Close");
+                        myClientTask.sendObject("User_Device", "Close");
                         break;
                     case 3:
-                        myClientTask.sendObject("User_Device","EngineStart");
+                        myClientTask.sendObject("User_Device", "EngineStart");
                         break;
-                    default :
-                        myClientTask.sendObject("User_Device","EngineStop");
+                    default:
+                        myClientTask.sendObject("User_Device", "EngineStop");
 
                 }
             }
@@ -91,23 +125,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-            /*@Override
-            public boolean onButtonLongClick(@NonNull CircleMenuView view, int index) {
-                Log.d("D", "onButtonLongClick| index: " + index);
-              Log.i("tag", "Open button clicked!");
-                return true;
-            }
-
-            @Override
-            public void onButtonLongClickAnimationStart(@NonNull CircleMenuView view, int index) {
-                Log.d("D", "onButtonLongClickAnimationStart| index: " + index);
-               // Toast toast = Toast.makeText(getApplicationContext(), "출력할 문자열_클로즈", Toast.LENGTH_SHORT); toast.show();
-            }
-
-            @Override
-            public void onButtonLongClickAnimationEnd(@NonNull CircleMenuView view, int index) {
-                Log.d("D", "onButtonLongClickAnimationEnd| index: " + index);
-            }*/
         });
 
 
@@ -119,59 +136,80 @@ public class MainActivity extends AppCompatActivity {
         int dstPort;
         JSONObject jsonObject = new JSONObject();
         String response;
+
         NetworkTask(String addr, int port) {
             dstAddress = addr;
             dstPort = port;
         }
 
-        private void sendObject(String name, String value){
-            try{
-                Log.i(name,value);
-                jsonObject.put(name,value);
-            }catch (JSONException e){
+        private void sendObject(String name, String value) {
+            try {
+                Log.i(name, value);
+                jsonObject.put(name, value);
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
         @Override
         protected Void doInBackground(Void... arg0) {
+            int code = 0;
+            InputStream inputStream;
+            OutputStream outputStream = null;
+            PrintStream printStream = null;
+            BufferedReader inFromServer = null;
 
             try {
-                Log.e("TCP","server connecting~~!");
                 Socket socket = new Socket(dstAddress, dstPort);
-                //sendObject();
-               /* InputStream inputStream = socket.getInputStream();
+                Log.i("TCP", "Server Connected");
 
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(
-                        1024);
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    byteArrayOutputStream.write(buffer, 0, bytesRead);
-                }
+                try {
+                    inputStream = socket.getInputStream();
+                    outputStream = socket.getOutputStream();
+                    printStream = new PrintStream(outputStream);
+                    inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                response = byteArrayOutputStream.toString("UTF-8");
+                    printStream.println("open"); //open command 전송
+
+                    response = inFromServer.readLine(); //user authentication
+                    Log.i("TCP", "Message From Server : " + response);
+
+                    try {
+                        code = Integer.parseInt(response);
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+
+                    code += 1;
+                    printStream.println(String.valueOf(code));
+                    Log.i("TCP", "Send Authentication Message to Server : " + code);
+
+                   /* response = inFromServer.readLine(); //final response received
+                    Log.i("TCP", "Authentication Message From Server : " + response);
 */
+                    response = inFromServer.readLine(); //final response received
+                    Log.i("TCP", "Core Code Message From Server : " + response);
 
-                try{
-                   /* OutputStream outputStream = socket.getOutputStream();
-                    PrintStream printStream = new PrintStream(outputStream);
-                    printStream.print(jsonObject);
-                    printStream.close();*/
-                    InputStream inputStream = socket.getInputStream();
-                    OutputStream outputStream = socket.getOutputStream();
-                    PrintStream printStream = new PrintStream(outputStream);
-                    BufferedReader inFromServer =
-                            new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    printStream.print(jsonObject);
-                    response = inFromServer.readLine();
-                    Log.i("kk", response);
+                    if(response.equals("Code Requesting")){
+                        printStream.println("Core Code");
+                    }
+                    Log.i("TCP", "Code Send Completed");
+
                     printStream.close();
-                }
-                catch (IOException e)
-                {
-                    Log.e("TCP","don't send message!");
+                } catch (IOException e) {
+                    Log.e("TCP", "Connecting Failed");
                     e.printStackTrace();
+                }finally {
+                    try{
+                        if(printStream != null){
+                            printStream.close();
+                        }
+                        if(inFromServer != null){
+                            inFromServer.close();
+                        }
+                    }catch (IOException e){
+                        //
+                    }
                 }
                 socket.close();
             } catch (UnknownHostException e) {
@@ -182,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
 
             return null;
         }
+
 
     }
 
