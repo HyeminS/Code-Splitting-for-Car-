@@ -1,0 +1,6 @@
+cell_size =	18
+
+def rotate_clockwise(shape):
+    return [ [ shape[y][x]
+			for y in xrange(len(shape)) ]
+		for x in xrange(len(shape[0]) - 1, -1, -1) ]
