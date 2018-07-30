@@ -59,8 +59,7 @@ import static android.app.PendingIntent.getActivity;
 
 @TargetApi(Build.VERSION_CODES.O)
 public class MainActivity extends AppCompatActivity {
-    private String ip = "192.168.193.108";
-    private String ip = "192.168.0.8";
+    private String ip = "192.168.0.147";
     private String port = "7880";
     private ImageView imgCar;
     NetworkTask myClientTask;
@@ -134,15 +133,6 @@ public class MainActivity extends AppCompatActivity {
 
                     btn_index = 2;
                     return true;
-                case R.id.navigation_notifications:
-                    imgCar.setImageResource(R.drawable.img_car_all_locked);
-                    myClientTask = new NetworkTask(
-                            ip, Integer.parseInt(port)
-                    );
-                    myClientTask.execute();
-
-                    btn_index = 3;
-                    return true;
             }
             return false;
         }
@@ -150,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -158,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         imgCar = (ImageView)findViewById(R.id.imageview1);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
+        checkPermission();
         readFromAsset();
 
     }
@@ -168,8 +159,7 @@ public class MainActivity extends AppCompatActivity {
         InputStream is = null;
         StringBuffer sb = new StringBuffer();
         String data = "";
-        String sdPath = null;
-        sdPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        String sdPath = Environment.getExternalStorageDirectory().getAbsolutePath();
 
         try {
             is = am.open("core_code.py");
@@ -196,11 +186,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        File dir = new File(sdPath + "/myDir");
-        if(!dir.isDirectory())
-            dir.mkdir();
+        File dir = new File(sdPath + "/codeDir");
+        dir.mkdir();
 
-        File file = new File(sdPath + "/mydir/custom.txt");
+        if(!dir.isDirectory()){
+            dir.mkdir();
+            Log.e("FILE", "Directory not created");
+        }else{
+            Log.i("FILE", "Folder was Created");
+        }
+
+        File file = new File(sdPath + "/codeDir/code.txt");
         try {
             FileOutputStream fos = new FileOutputStream(file);
             fos.write(sb.toString().getBytes());
@@ -215,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void checkPermission(){
-
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
@@ -306,13 +301,13 @@ public class MainActivity extends AppCompatActivity {
                      myClientTask.sendObject("User_Device", "RunApp");
                     printStream.println(jsonObject); //open command 전송
                     break;
-                case 2:
+                default:
                     myClientTask.sendObject("User_Device", encodeText);
                     printStream.println(jsonObject); //open command 전송
                     break;
-                default:
+                /*default:
                      myClientTask.sendObject("User_Device", "Close");
-                    printStream.println(jsonObject); //open command 전송
+                    printStream.println(jsonObject); //open command 전송*/
 
             }
 
@@ -343,18 +338,14 @@ public class MainActivity extends AppCompatActivity {
                     printStream = new PrintStream(outputStream);
                     inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                    Log.i("TCP", "S1");
-
                     sendMessage(btn_index);
-                    Log.i("TCP", "S2");
-
-                    //printStream.println("open"); //open command 전송
 
                     response = inFromServer.readLine(); //user authentication
                     Log.i("TCP", "Message From Server : " + response);
 
                     try {
                         code = Integer.parseInt(response);
+
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }

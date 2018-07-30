@@ -7,4 +7,5 @@
     <color name="item_tint">#6846B5</color>
     <color name="white">#FFFFFF</color>
     <color name="back">#333B43</color>
+    <color name="cardview_light_background">#333B43</color>
 </resources>

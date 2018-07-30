@@ -19,11 +19,4 @@
         android:title="Open"
         app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/navigation_notifications"
-        android:icon="@drawable/ic_lock_outline_white_24dp"
-        android:title="Close"
-        app:showAsAction="ifRoom"
-        />
-
 </menu>
