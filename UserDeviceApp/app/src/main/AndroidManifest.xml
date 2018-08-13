@@ -26,5 +26,4 @@
         <activity android:name=".HomeActivity"></activity>
         <activity android:name=".FingerprintActivity"></activity>
     </application>
-
 </manifest>

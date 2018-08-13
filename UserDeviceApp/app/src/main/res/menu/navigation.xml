@@ -11,12 +11,16 @@
     <item
         android:id="@+id/navigation_runapp"
         android:icon="@drawable/ic_settings_power_white_24dp"
-        android:title="Run App"
+        android:title="Power On"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/ic_lock_open_white_24dp"
         android:title="Open"
         app:showAsAction="ifRoom"/>
-
+    <item
+        android:id="@+id/poweron"
+        android:icon="@drawable/a"
+        android:title="Run App"
+        app:showAsAction="ifRoom"/>
 </menu>

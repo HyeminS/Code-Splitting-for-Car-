@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.ActionBar;
@@ -31,6 +32,7 @@ import org.w3c.dom.Text;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -60,7 +62,7 @@ import static android.app.PendingIntent.getActivity;
 
 @TargetApi(Build.VERSION_CODES.O)
 public class MainActivity extends AppCompatActivity {
-    private String ip = "192.168.0.147";
+    private String ip = "192.168.0.7";
     private String port = "7880";
     private ImageView imgCar;
     NetworkTask myClientTask;
@@ -70,12 +72,15 @@ public class MainActivity extends AppCompatActivity {
     int btn_index = 0;
     java.util.Base64.Encoder encoder;
     byte[] encodeByte;
+    JSONObject jsonPowerOn = new JSONObject();
+//    Intent intent1;
+//    Intent intent2;
 
     private class NetworkManagerThread extends Thread {
         public void run() {
             try {
                 Log.i("TCP", "NetworkManagerThread");
-                ServerSocket socServer = new ServerSocket(8800);
+                ServerSocket socServer = new ServerSocket(8880);
                 Socket socClient = null;
                 BufferedReader br = null;
                 PrintStream ps = null;
@@ -135,6 +140,15 @@ public class MainActivity extends AppCompatActivity {
 
                     btn_index = 2;
                     return true;
+                case R.id.poweron:
+                    imgCar.setImageResource(R.drawable.img_car_all_locked);
+                    myClientTask = new NetworkTask(
+                            ip, Integer.parseInt(port)
+                    );
+                    myClientTask.execute();
+
+                    btn_index = 3;
+                    return true;
             }
             return false;
         }
@@ -147,6 +161,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         new NetworkManagerThread().start();
+
+
 
         imgCar = (ImageView)findViewById(R.id.imageview1);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -163,8 +179,9 @@ public class MainActivity extends AppCompatActivity {
         String data = "";
         String sdPath = Environment.getExternalStorageDirectory().getAbsolutePath();
 
+
         try {
-            is = am.open("core_code.py");
+            is = am.open("corecode.py");
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
             while((data = br.readLine())!= null){
@@ -211,7 +228,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        String resultMsg;
+        Log.i("TCP", String.valueOf(resultCode));
+        if (resultCode != RESULT_OK) {
+            Toast.makeText(MainActivity.this, "결과가 성공이 아님.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        if (resultCode == RESULT_OK && requestCode == 3000) {
+            resultMsg = data.getStringExtra("value");
+            Log.i("TCP", resultMsg);
+        }
+
+    }
     public void checkPermission(){
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -259,17 +291,69 @@ public class MainActivity extends AppCompatActivity {
             return buf.toString();
         }
 
+        public String decode_LoginReq(byte[] src) {
+            ByteArrayInputStream buf = new ByteArrayInputStream(src);
+            DataInputStream convert = new DataInputStream(buf);
+            byte[] buffer = null;
+
+            try {
+                buffer = new byte[src.length];
+                convert.read(buffer, 0, src.length);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return new String(buffer);
+        }
 
         private void sendMessage(int index) {
+            switch (index) {
+                case 0://engine start
+
+                    Intent intent1 = new Intent(MainActivity.this,FingerprintActivity.class);
+                    startActivity(intent1);
+                    myClientTask.sendObject("User_Device",  "EngineStart");
+                    printStream.println(jsonObject); //open command 전송
+                    break;
+                case 1://power on
+
+                    Intent intent2 = new Intent(MainActivity.this,FingerprintActivity.class);
+                    startActivity(intent2);
+                    finish();
+                    myClientTask.sendObject("User_Device","PowerON");
+                    printStream.println(jsonObject); //open command 전송
+                    break;
+                case 2:
+                    myClientTask.sendObject("User_Device", "Open");
+                    printStream.println(jsonObject); //open command 전송
+                    break;
+                default:
+                    myClientTask.sendObject("User_Device", "RunApp" );
+                    printStream.println(jsonObject); //open command 전송
+
+            }
+
+        }
+
+        private void sendObject(String name, String value) {
+            try {
+                Log.i(name, value);
+                jsonObject.put(name, value);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public String transferPowerOn(){
             AssetManager am = getResources().getAssets();
             InputStream is = null;
             StringBuffer sb = new StringBuffer();
             String encodeText = "";
             String data = "";
 
-
-            try {
-                is = am.open("core_code.py");
+            try{
+                is = am.open("corecode.py");
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
                 while((data = br.readLine())!= null){
@@ -294,42 +378,54 @@ public class MainActivity extends AppCompatActivity {
 
             encodeText = encode_LoginReq(sb.toString());
 
-            switch (index) {
-                case 0:
-                    Intent intent=new Intent(MainActivity.this,FingerprintActivity.class);
-                    startActivity(intent);
-                    myClientTask.sendObject("User_Device", "EngineStart");
-                    printStream.println(jsonObject); //open command 전송
-                    break;
-                case 1:
-                     myClientTask.sendObject("User_Device", "RunApp");
-                    printStream.println(jsonObject); //open command 전송
-                    break;
-                default:
-                    myClientTask.sendObject("User_Device", encodeText);
-                    printStream.println(jsonObject); //open command 전송
-                    break;
-                /*default:
-                     myClientTask.sendObject("User_Device", "Close");
-                    printStream.println(jsonObject); //open command 전송*/
-
-            }
-
+            return encodeText;
         }
 
-        private void sendObject(String name, String value) {
+        public String transferEngineStart(){
+
+            AssetManager am = getResources().getAssets();
+            InputStream is = null;
+            StringBuffer sb = new StringBuffer();
+            String encodeText = "";
+            String data = "";
+
             try {
-                Log.i(name, value);
-                jsonObject.put(name, value);
-            } catch (JSONException e) {
+                is = am.open("corecode.py");
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+                while((data = br.readLine())!= null){
+                    sb.append(data);
+                    sb.append("\n");
+                    if(data == null)
+                        break;
+                }
+
+                is.close();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
 
+            if(is != null){
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            encodeText = encode_LoginReq(sb.toString());
+
+            return encodeText;
+        }
 
         @Override
         protected Void doInBackground(Void... arg0) {
             int code = 0;
+            String getFromServer;
+            byte[] res;
+            String msg = null;
+            Intent intentBack = getIntent();
+            String getIntentData = "aaa";
 
             try {
                 Log.i("TCP", "addr - " + dstAddress + " port - " + dstPort);
@@ -343,10 +439,29 @@ public class MainActivity extends AppCompatActivity {
                     inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
                     sendMessage(btn_index);
+                    getIntentData = intentBack.getStringExtra("value");
+                    Log.i("TCP", "MainIntentItem : " + getIntentData);
 
-                    response = inFromServer.readLine(); //user authentication
-                    Log.i("TCP", "Message From Server : " + response);
+//                    if(btn_index == 1) {
 
+
+
+                        //if(getIntentData.equals("setPowerOn")) {
+
+
+                            response = inFromServer.readLine(); //user authentication
+                           // Log.i("TCP", "Message From Server1 : " + response);
+                            //res = response.getBytes();
+
+                            //  getFromServer = decode_LoginReq(res);
+                            Log.i("TCP", "Message From Server2 : " + response);
+                            if (response.equals("PowerON Permissioned")) {
+                                Log.i("TCP", "Send Remaining Code to Server");
+                                myClientTask.sendObject("User_Device", transferPowerOn());
+                                printStream.println(jsonObject); //open command 전송
+                            }
+
+                   /*
                     try {
                         code = Integer.parseInt(response);
 
@@ -364,9 +479,12 @@ public class MainActivity extends AppCompatActivity {
                     if(response.equals("Code Requesting")){
                         printStream.println("Core Code");
                     }
-                    Log.i("TCP", "Code Send Completed");
+                    Log.i("TCP", "Code Send Completed");*/
 
-                    printStream.close();
+                            printStream.close();
+                            getIntentData = null;
+                       // }
+                    //}
                 } catch (IOException e) {
                     Log.e("TCP", "Connecting Failed");
                     e.printStackTrace();
