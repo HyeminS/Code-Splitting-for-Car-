@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_directions_car_white_24dp"
+        android:title="Engine Start"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/navigation_runapp"
+        android:icon="@drawable/ic_settings_power_white_24dp"
+        android:title="Run App"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/navigation_dashboard"
+        android:icon="@drawable/ic_lock_open_white_24dp"
+        android:title="Open"
+        app:showAsAction="ifRoom"/>
+
+</menu>
