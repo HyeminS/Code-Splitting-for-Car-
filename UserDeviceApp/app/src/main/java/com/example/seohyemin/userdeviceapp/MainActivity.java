@@ -3,6 +3,7 @@ package com.example.seohyemin.userdeviceapp;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Color;
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
                     myClientTask.execute();
 
                     btn_index = 0;
+
                     return true;
                 case R.id.navigation_runapp:
                     imgCar.setImageResource(R.drawable.img_car_all_locked);
@@ -294,6 +296,8 @@ public class MainActivity extends AppCompatActivity {
 
             switch (index) {
                 case 0:
+                    Intent intent=new Intent(MainActivity.this,FingerprintActivity.class);
+                    startActivity(intent);
                     myClientTask.sendObject("User_Device", "EngineStart");
                     printStream.println(jsonObject); //open command 전송
                     break;
