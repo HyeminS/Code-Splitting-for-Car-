@@ -70,11 +70,11 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
         if(gm !=null){
             gm.onAuthSucess();
         }
-        Intent intent = new Intent(context, HomeActivity.class);
-       // intent.putExtra("value","setPowerOn");
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra("value","FingerprintSucess");
        // Log.i("FingerHandler", intent.getStringExtra("value"));
 
-      ((Activity) context).finish();
+      //((Activity) context).finish();
       context.startActivity(intent);
 
     }

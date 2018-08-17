@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity
 
     public static final String SEND_INFORMATION = "POWERONMSG";
     public FingerprintHandler fingerprintHandler;
-    private String ip = "192.168.0.7";
+    private String ip = "192.168.193.141";
     private String port = "7880";
     private ImageView imgCar;
     NetworkTask myClientTask;
@@ -136,12 +136,8 @@ public class MainActivity extends AppCompatActivity
                     return true;
                 case R.id.navigation_runapp:
                     imgCar.setImageResource(R.drawable.img_car_all_locked);
-                    myClientTask = new NetworkTask(
-                            ip, Integer.parseInt(port)
-                    );
-                    myClientTask.execute();
-
-                    btn_index = 1;
+                    Intent intent = new Intent(MainActivity.this,FingerprintActivity.class);
+                    startActivity(intent);
                     return true;
                 case R.id.navigation_dashboard:
                     imgCar.setImageResource(R.drawable.img_car_top_left_unlock);
@@ -236,6 +232,28 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+    }
+    public void onResume() {
+        super.onResume();
+        Intent intentBack = getIntent();
+        String getIntentData = intentBack.getStringExtra("value");
+        Log.i("TCP", "MainActivity : " + getIntentData);
+        if(getIntentData.equals("FingerprintSucess"))
+        {
+            Log.i("TCP", "MainActivity : okok");
+            myClientTask = new NetworkTask(
+                    ip, Integer.parseInt(port)
+            );
+            myClientTask.execute();
+            btn_index = 1;
+        }
+        else
+        {
+            Log.i("TCP", "MainActivity : nono");
+            Intent intent = new Intent(MainActivity.this,FingerprintActivity.class);
+            startActivity(intent);
         }
 
     }
@@ -426,7 +444,7 @@ public class MainActivity extends AppCompatActivity
                     outputStream = socket.getOutputStream();
                     printStream = new PrintStream(outputStream);
                     inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
+                    Log.i("TCP", String.valueOf(btn_index));
                     sendMessage(btn_index);
                     getIntentData = intentBack.getStringExtra("value");
                     Log.i("TCP", "MainIntentItem : " + getIntentData);
