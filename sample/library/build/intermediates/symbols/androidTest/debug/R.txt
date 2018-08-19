@@ -1,0 +1,17 @@
+int attr endColor 0x7f010000
+int attr inactiveColor 0x7f010001
+int attr max 0x7f010002
+int attr min 0x7f010003
+int attr progress 0x7f010004
+int attr ringBias 0x7f010005
+int attr sectionRatio 0x7f010006
+int attr startColor 0x7f010007
+int[] styleable SeekCircle { 0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003, 0x7f010004, 0x7f010005, 0x7f010006, 0x7f010007 }
+int styleable SeekCircle_endColor 0
+int styleable SeekCircle_inactiveColor 1
+int styleable SeekCircle_max 2
+int styleable SeekCircle_min 3
+int styleable SeekCircle_progress 4
+int styleable SeekCircle_ringBias 5
+int styleable SeekCircle_sectionRatio 6
+int styleable SeekCircle_startColor 7

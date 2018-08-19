@@ -1,0 +1,4 @@
+#Sat Aug 18 12:13:45 KST 2018
+base.0=/Users/seohyemin/Desktop/circularseekbar-master/sample/sample/build/intermediates/transforms/dexMerger/debug/2
+path.0=classes.dex
+renamed.0=classes.dex

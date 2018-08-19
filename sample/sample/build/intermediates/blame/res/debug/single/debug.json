@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/Users/seohyemin/Desktop/circularseekbar-master/sample/sample/build/intermediates/res/merged/debug/layout_main.xml.flat",
+        "source": "/Users/seohyemin/Desktop/circularseekbar-master/sample/sample/src/main/res/layout/main.xml"
+    },
+    {
+        "merged": "/Users/seohyemin/Desktop/circularseekbar-master/sample/sample/build/intermediates/res/merged/debug/drawable_anonymous.png.flat",
+        "source": "/Users/seohyemin/Desktop/circularseekbar-master/sample/sample/src/main/res/drawable/anonymous.png"
+    },
+    {
+        "merged": "/Users/seohyemin/Desktop/circularseekbar-master/sample/sample/build/intermediates/res/merged/debug/drawable_ic_launcher.png.flat",
+        "source": "/Users/seohyemin/Desktop/circularseekbar-master/sample/sample/src/main/res/drawable/ic_launcher.png"
+    }
+]

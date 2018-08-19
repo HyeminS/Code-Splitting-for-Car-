@@ -1,0 +1,37 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:2:1-11:12
+INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:2:1-11:12
+INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:2:1-11:12
+INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:2:1-11:12
+INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:2:1-11:12
+INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:2:1-11:12
+INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:2:1-11:12
+	package
+		ADDED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:3:5-37
+		INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml
+		INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml
+	android:versionName
+		ADDED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:5:5-30
+		INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml
+		INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:2:11-69
+	android:versionCode
+		ADDED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:4:5-28
+		INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml
+		INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml
+uses-sdk
+ADDED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:7:5-9:41
+INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:7:5-9:41
+INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:7:5-9:41
+INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:7:5-9:41
+INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:7:5-9:41
+	android:targetSdkVersion
+		ADDED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:9:9-38
+		INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml
+		INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		ADDED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml:8:9-34
+		INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml
+		INJECTED from /Users/seohyemin/Desktop/circularseekbar-master/sample/library/src/main/AndroidManifest.xml

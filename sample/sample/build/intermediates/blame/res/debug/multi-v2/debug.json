@@ -1,0 +1,36 @@
+{
+    "logs": [
+        {
+            "outputFile": "/Users/seohyemin/Desktop/circularseekbar-master/sample/sample/build/intermediates/res/merged/debug/values_values.arsc.flat",
+            "map": [
+                {
+                    "source": "/Users/seohyemin/Desktop/circularseekbar-master/sample/sample/src/main/res/values/color.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,93",
+                        "endColumns": "37,39",
+                        "endOffsets": "88,128"
+                    }
+                },
+                {
+                    "source": "/Users/seohyemin/Desktop/circularseekbar-master/sample/sample/src/main/res/values/strings.xml",
+                    "from": {
+                        "startLines": "3,4",
+                        "startColumns": "4,4",
+                        "startOffsets": "56,111",
+                        "endColumns": "54,46",
+                        "endOffsets": "106,153"
+                    },
+                    "to": {
+                        "startLines": "5,6",
+                        "startColumns": "4,4",
+                        "startOffsets": "538,593",
+                        "endColumns": "54,46",
+                        "endOffsets": "588,635"
+                    }
+                }
+            ]
+        }
+    ]
+}

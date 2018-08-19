@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SeekCircle"><attr format="integer" name="min" value="0"/><attr format="integer" name="max" value="200"/><attr format="integer" name="progress" value="0"/><attr format="color" name="startColor"/><attr format="color" name="endColor"/><attr format="color" name="inactiveColor"/><attr format="float" name="ringBias"/><attr format="float" name="sectionRatio"/></declare-styleable>
+</resources>
