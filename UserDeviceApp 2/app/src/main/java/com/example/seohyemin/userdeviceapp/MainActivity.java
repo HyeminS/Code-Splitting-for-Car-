@@ -5,10 +5,12 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,35 +57,29 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.List;
+
 import android.widget.Toast;
 
 
 @TargetApi(Build.VERSION_CODES.O)
 public class MainActivity extends AppCompatActivity
-    implements FingerprintHandler.getMsg {
-
+        implements FingerprintHandler.getMsg {
     public static final String SEND_INFORMATION = "POWERONMSG";
-    public FingerprintHandler fingerprintHandler;
-    private String ip = "192.168.193.141";
+    private String ip = "192.168.0.147";
     private String port = "7880";
     private ImageView imgCar;
     NetworkTask myClientTask;
-    Button btn1;
-    Button btn2;
-    TextView tv1;
-    int btn_index = 0;
-    java.util.Base64.Encoder encoder;
-    byte[] encodeByte;
-    JSONObject jsonPowerOn = new JSONObject();
+    int btn_index = 5;
 
-    public void onAuthSucess(){
+    public void onAuthSucess() {
         SharedPreferences sharedPreferences = getSharedPreferences("AuthData", Context.MODE_PRIVATE);
         String d = sharedPreferences.getString(SEND_INFORMATION, "");
-        Toast.makeText(getApplicationContext(),d,Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), d, Toast.LENGTH_LONG).show();
 
     }
 
-    public void onAuthFail(){
+    public void onAuthFail() {
 
     }
 
@@ -121,22 +117,13 @@ public class MainActivity extends AppCompatActivity
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
-       @Override
+        @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    imgCar.setImageResource(R.drawable.img_car_all_locked);
-                    myClientTask = new NetworkTask(
-                            ip, Integer.parseInt(port)
-                    );
-                    myClientTask.execute();
 
-                    btn_index = 0;
-
-                    return true;
                 case R.id.navigation_runapp:
                     imgCar.setImageResource(R.drawable.img_car_all_locked);
-                    Intent intent = new Intent(MainActivity.this,FingerprintActivity.class);
+                    Intent intent = new Intent(MainActivity.this, FingerprintActivity.class);
                     startActivity(intent);
                     return true;
                 case R.id.navigation_dashboard:
@@ -146,7 +133,7 @@ public class MainActivity extends AppCompatActivity
                     );
                     myClientTask.execute();
 
-                    btn_index = 2;
+                    btn_index = 1;
                     return true;
                 case R.id.poweron:
                     imgCar.setImageResource(R.drawable.img_car_all_locked);
@@ -155,7 +142,7 @@ public class MainActivity extends AppCompatActivity
                     );
                     myClientTask.execute();
 
-                    btn_index = 3;
+                    btn_index = 2;
                     return true;
             }
             return false;
@@ -168,18 +155,25 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         new NetworkManagerThread().start();
 
+   /*     final PackageManager pm = getPackageManager();
+        List<ApplicationInfo> list = pm.getInstalledApplications(0);
 
-        imgCar = (ImageView)findViewById(R.id.imageview1);
+        for (ApplicationInfo applicationInfo : list) {
+            String name = String.valueOf(applicationInfo.loadLabel(pm));    // 앱 이름
+            String pName = applicationInfo.packageName;   // 앱 패키지
+            Log.i("Name", name);
+            Log.i("Package", pName);
+        }*/
+
+        imgCar = (ImageView) findViewById(R.id.imageview1);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         checkPermission();
         readFromAsset();
-        //fingerprintHandler = new FingerprintHandler(this);
-
 
     }
 
-    public void readFromAsset(){
+    public void readFromAsset() {
         AssetManager am = getResources().getAssets();
         InputStream is = null;
         StringBuffer sb = new StringBuffer();
@@ -191,11 +185,11 @@ public class MainActivity extends AppCompatActivity
             is = am.open("corecode.py");
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-            while((data = br.readLine())!= null){
+            while ((data = br.readLine()) != null) {
                 sb.append(data);
                 sb.append("\n");
 
-                if(data == null)
+                if (data == null)
                     break;
             }
 
@@ -204,7 +198,7 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-        if(is != null){
+        if (is != null) {
             try {
                 is.close();
             } catch (IOException e) {
@@ -215,10 +209,10 @@ public class MainActivity extends AppCompatActivity
         File dir = new File(sdPath + "/codeDir");
         dir.mkdir();
 
-        if(!dir.isDirectory()){
+        if (!dir.isDirectory()) {
             dir.mkdir();
             Log.e("FILE", "Directory not created");
-        }else{
+        } else {
             Log.i("FILE", "Folder was Created");
         }
 
@@ -235,43 +229,41 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
+
     public void onResume() {
         super.onResume();
         Intent intentBack = getIntent();
         String getIntentData = intentBack.getStringExtra("value");
         Log.i("TCP", "MainActivity : " + getIntentData);
-        if(getIntentData.equals("FingerprintSucess"))
-        {
-            Log.i("TCP", "MainActivity : okok");
+
+        if (getIntentData.equals("FingerprintSucess")) {
+            Log.i("TCP", "MainActivity : Auth Suceeded");
             myClientTask = new NetworkTask(
                     ip, Integer.parseInt(port)
             );
             myClientTask.execute();
-            btn_index = 1;
-        }
-        else
-        {
-            Log.i("TCP", "MainActivity : nono");
-            Intent intent = new Intent(MainActivity.this,FingerprintActivity.class);
+            btn_index = 0;
+        } else {
+            Log.i("TCP", "MainActivity : Auth Failed");
+            Intent intent = new Intent(MainActivity.this, FingerprintActivity.class);
             startActivity(intent);
         }
-
     }
 
-    public void checkPermission(){
+    public void checkPermission() {
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                    || checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ){
-                if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-                    Log.i("Downloadg","외부 저장소 사용을 위해 읽기/쓰기 필요");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                    || checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    Log.i("Download", "외부 저장소 사용을 위해 읽기/쓰기 필요");
                 }
 
-                requestPermissions(new String[] {
+                requestPermissions(new String[]{
                         Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 2);
 
-            }else{
-                Log.i("Downloadg","권한승인됨");
+            } else {
+                Log.i("Download", "권한승인됨");
             }
         }
     }
@@ -305,42 +297,23 @@ public class MainActivity extends AppCompatActivity
             return buf.toString();
         }
 
-        public String decode_LoginReq(byte[] src) {
-            ByteArrayInputStream buf = new ByteArrayInputStream(src);
-            DataInputStream convert = new DataInputStream(buf);
-            byte[] buffer = null;
-
-            try {
-                buffer = new byte[src.length];
-                convert.read(buffer, 0, src.length);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return new String(buffer);
-        }
-
         private void sendMessage(int index) {
             switch (index) {
-                case 0://engine start
-                    myClientTask.sendObject("User_Device",  "EngineStart");
+                case 0:
+                    myClientTask.sendObject("User_Device", "PowerON");
                     printStream.println(jsonObject); //open command 전송
+
+
                     break;
-                case 1://power on
-                    myClientTask.sendObject("User_Device","PowerON");
-                    printStream.println(jsonObject); //open command 전송
-                    break;
-                case 2:
+                case 1:
                     myClientTask.sendObject("User_Device", "Open");
                     printStream.println(jsonObject); //open command 전송
                     break;
                 default:
-                    myClientTask.sendObject("User_Device", "RunApp" );
+                    myClientTask.sendObject("User_Device", "RunApp");
                     printStream.println(jsonObject); //open command 전송
 
             }
-
         }
 
         private void sendObject(String name, String value) {
@@ -352,21 +325,21 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        public String transferPowerOn(){
+        public String transferPowerOn() {
             AssetManager am = getResources().getAssets();
             InputStream is = null;
             StringBuffer sb = new StringBuffer();
             String encodeText = "";
             String data = "";
 
-            try{
+            try {
                 is = am.open("corecode.py");
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-                while((data = br.readLine())!= null){
+                while ((data = br.readLine()) != null) {
                     sb.append(data);
                     sb.append("\n");
-                    if(data == null)
+                    if (data == null)
                         break;
                 }
 
@@ -375,7 +348,7 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
 
-            if(is != null){
+            if (is != null) {
                 try {
                     is.close();
                 } catch (IOException e) {
@@ -388,7 +361,7 @@ public class MainActivity extends AppCompatActivity
             return encodeText;
         }
 
-        public String transferEngineStart(){
+        public String transferEngineStart() {
 
             AssetManager am = getResources().getAssets();
             InputStream is = null;
@@ -400,10 +373,10 @@ public class MainActivity extends AppCompatActivity
                 is = am.open("corecode.py");
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-                while((data = br.readLine())!= null){
+                while ((data = br.readLine()) != null) {
                     sb.append(data);
                     sb.append("\n");
-                    if(data == null)
+                    if (data == null)
                         break;
                 }
 
@@ -412,7 +385,7 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
 
-            if(is != null){
+            if (is != null) {
                 try {
                     is.close();
                 } catch (IOException e) {
@@ -444,35 +417,58 @@ public class MainActivity extends AppCompatActivity
                     outputStream = socket.getOutputStream();
                     printStream = new PrintStream(outputStream);
                     inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    Log.i("TCP", String.valueOf(btn_index));
-                    sendMessage(btn_index);
-                    getIntentData = intentBack.getStringExtra("value");
-                    Log.i("TCP", "MainIntentItem : " + getIntentData);
 
-//                    if(btn_index == 1) {
-
-
-
-                        //if(getIntentData.equals("setPowerOn")) {
-
+                    switch (btn_index) {
+                        case 0:
+                            myClientTask.sendObject("User_Device", "PowerON");
+                            printStream.println(jsonObject); //open command 전송
 
                             response = inFromServer.readLine(); //user authentication
-                           // Log.i("TCP", "Message From Server1 : " + response);
-                            //res = response.getBytes();
+                            Log.i("TCP", "Message From Server : " + response);
 
-                            //  getFromServer = decode_LoginReq(res);
-                            Log.i("TCP", "Message From Server2 : " + response);
                             if (response.equals("PowerON Permissioned")) {
                                 Log.i("TCP", "Send Remaining Code to Server");
                                 myClientTask.sendObject("User_Device", transferPowerOn());
                                 printStream.println(jsonObject); //open command 전송
                             }
+                            break;
 
-                   /*
+                        case 1:
+                            myClientTask.sendObject("User_Device", "Open");
+                            printStream.println(jsonObject); //open command 전송
+                            break;
+
+                        default:
+                            Intent intent = getPackageManager().getLaunchIntentForPackage("org.xeustechnologies.android.kfs");
+                            startActivity(intent);
+                            /*myClientTask.sendObject("User_Device", "RunApp");
+                            printStream.println(jsonObject); //open command 전송
+
+
+                            printStream.println("Core Code");
+                            Log.i("TCP", "Code Send Completed");*/
+
+
+                    }
+
+
+                   /* Log.i("TCP", String.valueOf("btn number : " + btn_index));
+                    sendMessage(btn_index);
+
+                    response = inFromServer.readLine(); //user authentication
+                    Log.i("TCP", "Message From Server : " + response);
+
+                    if (response.equals("PowerON Permissioned")) {
+                        Log.i("TCP", "Send Remaining Code to Server");
+                        myClientTask.sendObject("User_Device", transferPowerOn());
+                        printStream.println(jsonObject); //open command 전송
+                    }
+
                     try {
                         code = Integer.parseInt(response);
 
                     } catch (NumberFormatException e) {
+
                         e.printStackTrace();
                     }
 
@@ -483,27 +479,28 @@ public class MainActivity extends AppCompatActivity
                     response = inFromServer.readLine(); //final response received
                     Log.i("TCP", "Core Code Message From Server : " + response);
 
-                    if(response.equals("Code Requesting")){
+                    if (response.equals("Code Requesting")) {
                         printStream.println("Core Code");
                     }
-                    Log.i("TCP", "Code Send Completed");*/
+                    Log.i("TCP", "Code Send Completed");
 
-                            printStream.close();
-                            getIntentData = null;
-                       // }
-                    //}
+                    printStream.close();
+
+             */
+
+                    printStream.close();
                 } catch (IOException e) {
                     Log.e("TCP", "Connecting Failed");
                     e.printStackTrace();
-                }finally {
-                    try{
-                        if(printStream != null){
+                } finally {
+                    try {
+                        if (printStream != null) {
                             printStream.close();
                         }
-                        if(inFromServer != null){
+                        if (inFromServer != null) {
                             inFromServer.close();
                         }
-                    }catch (IOException e){
+                    } catch (IOException e) {
                     }
                 }
                 socket.close();
@@ -512,11 +509,7 @@ public class MainActivity extends AppCompatActivity
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             return null;
         }
-
-
     }
-
 }

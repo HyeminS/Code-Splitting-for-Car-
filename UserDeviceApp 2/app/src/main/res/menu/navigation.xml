@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_directions_car_white_24dp"
-        android:title="Engine Start"
-        app:showAsAction="ifRoom"/>
-
-    <item
         android:id="@+id/navigation_runapp"
         android:icon="@drawable/ic_settings_power_white_24dp"
         android:title="Power On"
